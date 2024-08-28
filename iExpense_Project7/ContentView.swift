@@ -7,7 +7,7 @@
 //import Observation
 import SwiftUI
 
-struct ExpenseItem: Identifiable, Codable {
+struct ExpenseItem: Identifiable, Codable, Hashable {
     var id = UUID()
     let name: String
     let type: String
@@ -56,6 +56,8 @@ struct ContentView: View {
 //    @State private var expensesListPersonal: [ExpenseItem]
 //    @State private var expensesListBusiness: [ExpenseItem]
     
+    //ADDED FOR CHALLENGE Project 9
+    @State private var path = NavigationPath()
     
     
     var body: some View {
@@ -91,20 +93,29 @@ struct ContentView: View {
                     }
                 .onDelete(perform: removeItems)
             }.navigationTitle("iExpense App")
+            //PROJECT 9 CHALLENGE 1
                 .toolbar {
-                    Button("Add Expense", systemImage: "plus") {
-                        
-                          //Test:
-//                        let expense = ExpenseItem(name: "Test", type: "Personal", amount: 5)
-//                        expenses.items.append(expense)
-                        
-                        showingAddExpense = true
-
+                    NavigationLink(destination: AddView(expenses: expenses)) {
+                        Image(systemName: "plus")
                     }
+                    
                 }
-                .sheet(isPresented: $showingAddExpense) {
-                    AddView(expenses: expenses)
-                }
+            
+            
+//                .toolbar {
+//                    Button("Add Expense", systemImage: "plus") {
+//                        
+//                          //Test:
+//  //                        let expense = ExpenseItem(name: "Test", type: "Personal", amount: 5)
+//  //                        expenses.items.append(expense)
+//
+//                        showingAddExpense = true
+//
+//                    }
+//                }
+//                .sheet(isPresented: $showingAddExpense) {
+//                    AddView(expenses: expenses)
+//                }
         }
     }
     
