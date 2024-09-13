@@ -12,6 +12,8 @@
 		2F0FFE5C2C72BEDD00F49B55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F0FFE5B2C72BEDD00F49B55 /* Assets.xcassets */; };
 		2F0FFE5F2C72BEDD00F49B55 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F0FFE5E2C72BEDD00F49B55 /* Preview Assets.xcassets */; };
 		2F48217A2C765E4800C05A76 /* AddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4821792C765E4800C05A76 /* AddView.swift */; };
+		2F570E8A2C93943400754C59 /* ExpensesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F570E892C93943400754C59 /* ExpensesList.swift */; };
+		2F9E4CCA2C9217B7004DD7E2 /* View-ExpenseStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9E4CC92C9217B7004DD7E2 /* View-ExpenseStyle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +23,8 @@
 		2F0FFE5B2C72BEDD00F49B55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F0FFE5E2C72BEDD00F49B55 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2F4821792C765E4800C05A76 /* AddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddView.swift; sourceTree = "<group>"; };
+		2F570E892C93943400754C59 /* ExpensesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesList.swift; sourceTree = "<group>"; };
+		2F9E4CC92C9217B7004DD7E2 /* View-ExpenseStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-ExpenseStyle.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +59,9 @@
 			children = (
 				2F0FFE572C72BEDB00F49B55 /* iExpense_Project7App.swift */,
 				2F0FFE592C72BEDB00F49B55 /* ContentView.swift */,
+				2F570E892C93943400754C59 /* ExpensesList.swift */,
 				2F4821792C765E4800C05A76 /* AddView.swift */,
+				2F9E4CC92C9217B7004DD7E2 /* View-ExpenseStyle.swift */,
 				2F0FFE5B2C72BEDD00F49B55 /* Assets.xcassets */,
 				2F0FFE5D2C72BEDD00F49B55 /* Preview Content */,
 			);
@@ -141,8 +147,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F0FFE5A2C72BEDB00F49B55 /* ContentView.swift in Sources */,
+				2F570E8A2C93943400754C59 /* ExpensesList.swift in Sources */,
 				2F0FFE582C72BEDB00F49B55 /* iExpense_Project7App.swift in Sources */,
 				2F48217A2C765E4800C05A76 /* AddView.swift in Sources */,
+				2F9E4CCA2C9217B7004DD7E2 /* View-ExpenseStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

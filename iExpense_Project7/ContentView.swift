@@ -4,102 +4,153 @@
 //
 //  Created by Jesse Sheehan on 8/18/24.
 //
-//import Observation
+import SwiftData
 import SwiftUI
 
-struct ExpenseItem: Identifiable, Codable, Hashable {
-    var id = UUID()
-    let name: String
-    let type: String
-    let amount: Double
-    let currency: String
+@Model
+class ExpenseItem { //Identifiable, Codable, Equatable { // SwiftData does all this!
+    //var id = UUID() Don't need with SwiftData
+    var name: String
+    var type: String
+    var amount: Double
+    //let currency: String
+    
+    init(name: String, type: String, amount: Double) {
+        self.name = name
+        self.type = type
+        self.amount = amount
+    }
 }
 
-//observable items can be used in more than one SwiftUI View
-@Observable
-class Expenses {
-    var items = [ExpenseItem]()  {
-        didSet {
-            //the "encode()" method can only work with classes marked as Codable (so adjust the ExpenseItem struct to conform to the Codable protocol)
-            if let encoded = try? JSONEncoder().encode(items) {
-                UserDefaults.standard.set(encoded, forKey: "Items")
-            }
-        }
-    }
-    
-    var personalItems: [ExpenseItem] {
-      items.filter { $0.type == "Personal"}
-    } 
-    var businessItems: [ExpenseItem] {
-      items.filter { $0.type == "Business"}
-    }
-    
-    init() {
-        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
-            if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
-                items = decodedItems
-                return
-            }
-        }
-    }
-    
-}
+
+//          //DO NOT NEED THE EXPENSES CLASS WITH SWIFT DATA!!
+// //observable items can be used in more than one SwiftUI View
+//@Observable
+//class Expenses {
+//    var items = [ExpenseItem]()  {
+//        didSet {
+//            //the "encode()" method can only work with classes marked as Codable (so adjust the ExpenseItem struct to conform to the Codable protocol)
+//            if let encoded = try? JSONEncoder().encode(items) {
+//                UserDefaults.standard.set(encoded, forKey: "Items")
+//            }
+//        }
+//    }
+//    
+//    var personalItems: [ExpenseItem] {
+//      items.filter { $0.type == "Personal"}
+//    } 
+//    var businessItems: [ExpenseItem] {
+//      items.filter { $0.type == "Business"}
+//    }
+//    
+//    init() {
+//        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
+//            if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
+//                items = decodedItems
+//                return
+//            }
+//        }
+//    }
+//}
 
 struct ContentView: View {
+    @Environment(\.modelContext) var modelContext
     
-    @State private var expenses = Expenses()
+    
+    //@Query var expenseItems: [ExpenseItem]
+
+    
+    //@State private var expenses = Expenses()
     
     @State private var showingAddExpense = false
+    @State private var expenseType = "All"
     
-    @State private var expenseType = "Personal"
+    @State private var sortOrder = [
+        SortDescriptor(\ExpenseItem.name),
+        SortDescriptor(\ExpenseItem.amount)
+    ]
+    
+    //@State private var expenseType = "Personal"
     
 //    @State private var expensesListPersonal: [ExpenseItem]
 //    @State private var expensesListBusiness: [ExpenseItem]
     
     //ADDED FOR CHALLENGE Project 9
-    @State private var path = NavigationPath()
+    //@State private var path = NavigationPath()
     
     
     var body: some View {
         
         NavigationStack {
-
             
             
-            List {
-                Picker("Personal or Business", selection: $expenseType) {
-                    ForEach(["Personal", "Business"], id: \.self) {
-                                    Text($0)
-                                }
+            //            List {
+            //                ExpensesList(title: "Business", expenses: expenses.businessItems, deleteItems: removeBusinessItems)
+            //
+            //                ExpensesList(title: "Personal", expenses: expenses.personalItems, deleteItems: removePersonalItems)
+            
+            //                Picker("Personal or Business", selection: $expenseType) {
+            //                    ForEach(["Personal", "Business"], id: \.self) {
+            //                                    Text($0)
+            //                                }
+            //                            }.pickerStyle(.segmented)
+        
+            ExpensesList(type: expenseType, sortOrder: sortOrder)
 
-                            }.pickerStyle(.segmented)
-                
-                ForEach(expenseType == "Personal" ? expenses.personalItems : expenses.businessItems) { item in
-                    
-                    HStack {
-                       
-                            VStack(alignment: .leading) {
-                                Text(item.name)
-                                    .font(.headline)
-                                
-                                Text(item.type)
-                            }
-                            Spacer()
-                            
-                            Text(item.amount, format: .currency(code: item.currency))
-                                .foregroundStyle(item.amount < 10 ? .green : item.amount < 100 ? .black : .red)
-                                .bold()
-                        }
-                    }
-                .onDelete(perform: removeItems)
-            }.navigationTitle("iExpense App")
+                .navigationTitle("iExpense App")
             //PROJECT 9 CHALLENGE 1
                 .toolbar {
-                    NavigationLink(destination: AddView(expenses: expenses)) {
-                        Image(systemName: "plus")
+                    
+                    Button("Add Expense", systemImage: "plus") {
+                        showingAddExpense = true
                     }
                     
+                    Menu("Filter", systemImage: "line.3.horizontal.decrease.circle") {
+                        Picker("Filter", selection: $expenseType) {
+                            Text("Show All Expenses")
+                                .tag("All")
+                            Divider()
+                            ForEach(AddView.types, id: \.self) { type in
+                                Text(type)
+                                    .tag(type)
+                            }
+                        }
+                    }
+                    Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                        Picker("Sort By", selection: $sortOrder) {
+                            Text("Name (A-Z)")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.name),
+                                    SortDescriptor(\ExpenseItem.amount)
+                                ])
+                            Text("Name (Z-A)")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.name, order: .reverse),
+                                    SortDescriptor(\ExpenseItem.amount)
+                                ])
+                            Text("Amount (Cheapest First)")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.amount),
+                                    SortDescriptor(\ExpenseItem.name)
+                                ])
+                            Text("Amount (Most Expensive First)")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.amount, order: .reverse),
+                                    SortDescriptor(\ExpenseItem.name)
+                                ])
+                        }
                 }
+                    .sheet(isPresented: $showingAddExpense) {
+                        AddView()
+                    }
+                }
+        }
+    }
+//                    NavigationLink(destination: AddView(expenses: expenses)) {
+//                        Image(systemName: "plus")
+//                    }
+                    
+//                }
             
             
 //                .toolbar {
@@ -116,21 +167,44 @@ struct ContentView: View {
 //                .sheet(isPresented: $showingAddExpense) {
 //                    AddView(expenses: expenses)
 //                }
-        }
-    }
+//        }
+//    }
     
-    func removeItems(at offsets: IndexSet) {
-        //creates the list of items being displayed at the moment.
-        let itemsToDelete = expenseType == "Personal" ? expenses.personalItems : expenses.businessItems
-        //for each item in the set
-        for index in offsets {
-            //if there's an item in the full items list with an id equal to the itemstodelete[index]...
-            if let indexInItems = expenses.items.firstIndex(where: { $0.id == itemsToDelete[index].id }) {
-                //then remove it:
-                expenses.items.remove(at: indexInItems)
-            }
-        }
-    }
+    // MOVED TO EXPENSESLIST
+//    func removeItems(at offsets: IndexSet, in inputArray: [ExpenseItem]) {
+//       var objectsToDelete = IndexSet()
+//        
+//        for offset in offsets {
+//            let item = inputArray[offset]
+//            
+//            if let index = expenses.items.firstIndex(of: item) {
+//                objectsToDelete.insert(index)
+//            }
+//        }
+//        expenses.items.remove(atOffsets: objectsToDelete)
+//    }
+    
+//    func removePersonalItems(at offsets: IndexSet) {
+//        removeItems(at: offsets, in: expenses.personalItems)
+//    }
+//    
+//    func removeBusinessItems(at offsets: IndexSet) {
+//        removeItems(at: offsets, in: expenses.businessItems)
+//    }
+    
+//    //JSON STUFF
+//    func removeItems(at offsets: IndexSet) {
+//        //creates the list of items being displayed at the moment.
+//        let itemsToDelete = expenseType == "Personal" ? expenses.personalItems : expenses.businessItems
+//        //for each item in the set
+//        for index in offsets {
+//            //if there's an item in the full items list with an id equal to the itemstodelete[index]...
+//            if let indexInItems = expenses.items.firstIndex(where: { $0.id == itemsToDelete[index].id }) {
+//                //then remove it:
+//                expenses.items.remove(at: indexInItems)
+//            }
+//        }
+//    }
     
 }
 
@@ -280,4 +354,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: ExpenseItem.self)
 }
