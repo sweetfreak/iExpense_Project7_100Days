@@ -41,8 +41,12 @@ struct ExpensesList: View {
                     // .foregroundStyle(item.amount < 10 ? .green : item.amount < 100 ? .black : .red)
                         .style(for: item)
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Purchased \(item.name) for \(item.amount.formatted(.currency(code: localCurrency)))")
+                .accessibilityHint("\(item.type) expense.")
             }
             .onDelete(perform: removeItems) // deleteItems)
+            
         }
     }
     
